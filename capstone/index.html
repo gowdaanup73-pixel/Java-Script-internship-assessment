@@ -3,33 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="JavaScript Capstone Project — Interactive Inventory Management System demonstrating variables, operators, control flow, loops, functions, and array methods.">
-    <title>Inventory Manager — JS Capstone Project</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <title>Inventory Manager</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- ═══════════ HEADER ═══════════ -->
-    <header id="app-header">
-        <div class="header-content">
-            <div class="logo">
-                <span class="logo-icon">📦</span>
-                <h1>Inventory Manager</h1>
-            </div>
-            <p class="subtitle">JavaScript Capstone Project — Internship Assessment</p>
-        </div>
+    <header>
+        <h1>Inventory Manager</h1>
+        <p>JavaScript Capstone Project</p>
     </header>
 
-    <!-- ═══════════ MAIN LAYOUT ═══════════ -->
-    <main id="app-main">
-
-        <!-- ── LEFT PANEL: Add Product Form ── -->
-        <section id="add-product-panel" class="panel">
-            <h2 class="panel-title">➕ Add New Product</h2>
-            <form id="product-form" autocomplete="off">
+    <main>
+        <!-- form to add new products -->
+        <section class="panel" id="add-panel">
+            <h2>Add New Product</h2>
+            <form id="product-form">
                 <div class="form-group">
                     <label for="product-name">Product Name</label>
                     <input type="text" id="product-name" placeholder="e.g. Wireless Mouse" required>
@@ -42,30 +31,27 @@
                     <label for="product-qty">Quantity</label>
                     <input type="number" id="product-qty" placeholder="e.g. 10" min="1" step="1" required>
                 </div>
-                <button type="submit" id="btn-add" class="btn btn-primary">Add to Inventory</button>
+                <button type="submit" id="btn-add">Add to Inventory</button>
             </form>
-            <div id="form-message" class="message hidden"></div>
+            <p id="form-msg" class="msg hidden"></p>
         </section>
 
-        <!-- ── RIGHT PANEL: Inventory Table + Analytics ── -->
-        <section id="inventory-panel" class="panel">
-
-            <!-- Search & Filter Bar -->
+        <!-- inventory display -->
+        <section class="panel" id="inventory-panel">
             <div class="toolbar">
-                <h2 class="panel-title">📋 Inventory Roster</h2>
-                <div class="toolbar-actions">
-                    <input type="text" id="search-input" placeholder="🔍 Search products…">
-                    <select id="filter-category">
+                <h2>Inventory</h2>
+                <div class="toolbar-right">
+                    <input type="text" id="search-box" placeholder="Search products...">
+                    <select id="category-filter">
                         <option value="all">All Categories</option>
                         <option value="Premium">Premium ($500+)</option>
-                        <option value="Standard">Standard ($50–$499)</option>
+                        <option value="Standard">Standard ($50-$499)</option>
                         <option value="Budget">Budget (Under $50)</option>
                     </select>
                 </div>
             </div>
 
-            <!-- Inventory Table -->
-            <div class="table-wrapper">
+            <div class="table-wrap">
                 <table id="inventory-table">
                     <thead>
                         <tr>
@@ -75,49 +61,44 @@
                             <th>Qty</th>
                             <th>Total</th>
                             <th>Category</th>
-                            <th>Actions</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
-                    <tbody id="inventory-body">
-                        <!-- Rows rendered by JS -->
-                    </tbody>
+                    <tbody id="table-body"></tbody>
                 </table>
-                <p id="empty-state" class="empty-state hidden">No products in inventory. Add one above! 🚀</p>
+                <p id="empty-msg" class="empty hidden">No products yet. Add some above!</p>
             </div>
 
-            <!-- Analytics Cards -->
-            <div id="analytics" class="analytics-grid">
-                <div class="stat-card" id="stat-total-items">
-                    <span class="stat-value" id="val-total-items">0</span>
+            <!-- stats cards -->
+            <div class="stats">
+                <div class="stat-card">
+                    <span class="stat-num" id="stat-items">0</span>
                     <span class="stat-label">Total Items</span>
                 </div>
-                <div class="stat-card" id="stat-total-value">
-                    <span class="stat-value" id="val-total-value">$0.00</span>
+                <div class="stat-card">
+                    <span class="stat-num" id="stat-value">$0.00</span>
                     <span class="stat-label">Total Value</span>
                 </div>
-                <div class="stat-card" id="stat-avg-price">
-                    <span class="stat-value" id="val-avg-price">$0.00</span>
+                <div class="stat-card">
+                    <span class="stat-num" id="stat-avg">$0.00</span>
                     <span class="stat-label">Avg Price</span>
                 </div>
-                <div class="stat-card" id="stat-most-expensive">
-                    <span class="stat-value" id="val-most-expensive">—</span>
+                <div class="stat-card">
+                    <span class="stat-num" id="stat-expensive">-</span>
                     <span class="stat-label">Most Expensive</span>
                 </div>
             </div>
-
         </section>
-
     </main>
 
-    <!-- ═══════════ CONSOLE LOG OUTPUT ═══════════ -->
+    <!-- console output section -->
     <section id="console-section">
-        <h2 class="panel-title">🖥️ Console Log Output</h2>
-        <div id="console-output"></div>
+        <h2>Console Output</h2>
+        <div id="console-box"></div>
     </section>
 
-    <!-- ═══════════ FOOTER ═══════════ -->
-    <footer id="app-footer">
-        <p>Built by <strong>Anup Gowda</strong> · JavaScript Internship Assessment · 2026</p>
+    <footer>
+        <p>Built by <strong>Anup Gowda</strong> &mdash; JavaScript Internship Assessment 2026</p>
     </footer>
 
     <script src="script.js"></script>

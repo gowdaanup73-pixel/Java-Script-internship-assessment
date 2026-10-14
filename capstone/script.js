@@ -1,82 +1,56 @@
-/* ═══════════════════════════════════════════════════════════════════════
-   Inventory Manager — Capstone JavaScript
-   ─────────────────────────────────────────
-   This capstone project integrates every concept covered in Assignments 1-6:
-     • Variables & Data Types      (const, let, var, typeof)
-     • Operators                   (arithmetic, assignment, comparison)
-     • Control Flow                (if/else, switch, ternary)
-     • Loops                       (for, while, do…while, break, continue)
-     • Functions                   (standard, arrow, default params, scope)
-     • Array Methods               (forEach, filter, map, push)
-   ═══════════════════════════════════════════════════════════════════════ */
+// Inventory Manager - Capstone Project
+// Demonstrates core JS: variables, operators, conditionals, loops, functions, and array methods.
 
-// ───────────────────────────────────────────────
-//  1 · VARIABLES & DATA TYPES  (Assignment 1)
-// ───────────────────────────────────────────────
-const APP_NAME = "Inventory Manager";       // string  – immutable app name
-let inventory = [];                         // array   – mutable product list
-var nextId = 1;                             // number  – legacy var for auto-ID
+const APP_NAME = "Inventory Manager";
+let inventory = [];
+var nextId = 1; // using var here to demonstrate legacy var vs modern let/const
 
-// Seed data — demonstrates object literals inside an array
+// starter inventory data
 const seedProducts = [
-    { name: "Laptop",          price: 899.99,  qty: 5  },
-    { name: "Wireless Mouse",  price: 29.99,   qty: 25 },
+    { name: "Laptop", price: 899.99, qty: 5 },
+    { name: "Wireless Mouse", price: 29.99, qty: 25 },
     { name: "Mechanical Keyboard", price: 74.50, qty: 12 },
-    { name: "USB-C Hub",       price: 45.00,   qty: 18 },
-    { name: "4K Monitor",      price: 549.00,  qty: 3  }
+    { name: "USB-C Hub", price: 45.00, qty: 18 },
+    { name: "4K Monitor", price: 549.00, qty: 3 }
 ];
 
-// ───────────────────────────────────────────────
-//  CONSOLE LOG MIRROR  (renders in-page console)
-// ───────────────────────────────────────────────
-const consoleEl = document.getElementById("console-output");
+// mirrors logs to both the browser console and the on-screen console panel
+const consoleBox = document.getElementById("console-box");
 
-function logToPage(message, type = "normal") {
+function logToScreen(message, type = "normal") {
+    if (!consoleBox) {
+        console.log(message);
+        return;
+    }
     const line = document.createElement("div");
     line.className = "log-line";
     if (type === "header") line.classList.add("log-header");
-    if (type === "warn")   line.classList.add("log-warn");
-    if (type === "error")  line.classList.add("log-error");
+    if (type === "warn") line.classList.add("log-warn");
+    if (type === "error") line.classList.add("log-error");
     line.textContent = message;
-    consoleEl.appendChild(line);
-    consoleEl.scrollTop = consoleEl.scrollHeight;
-    // Also mirror to browser console
+    consoleBox.appendChild(line);
+    consoleBox.scrollTop = consoleBox.scrollHeight;
     console.log(message);
 }
 
-// ───────────────────────────────────────────────
-//  2 · OPERATORS  (Assignment 2)
-// ───────────────────────────────────────────────
-
-/**
- * Calculates the line-total for a product.
- * Demonstrates: arithmetic (*), comparison (>=), assignment (+=).
- */
+// calculates item subtotal and applies a 10% discount for orders of 10 or more units
 function calculateLineTotal(price, qty) {
-    let lineTotal = price * qty;            // arithmetic: multiplication
+    let lineTotal = price * qty;
     let discount = 0;
 
-    // Bulk discount: 10% off when qty >= 10 (comparison operator)
+    // bulk discount check
     if (qty >= 10) {
-        discount = lineTotal * 0.10;        // arithmetic: percentage
-        lineTotal -= discount;              // compound assignment: -=
+        discount = lineTotal * 0.10;
+        lineTotal -= discount;
     }
 
     return { lineTotal, discount };
 }
 
-// ───────────────────────────────────────────────
-//  3 · CONTROL FLOW  (Assignment 3)
-// ───────────────────────────────────────────────
-
-/**
- * Classifies a product into a category.
- * Demonstrates: if/else, switch, and ternary operator.
- */
+// categorizes items based on price tier using if/else and verified with a switch
 function classifyProduct(price) {
-    let category;
+    let category = "Budget";
 
-    // if…else chain
     if (price >= 500) {
         category = "Premium";
     } else if (price >= 50) {
@@ -85,132 +59,124 @@ function classifyProduct(price) {
         category = "Budget";
     }
 
-    // switch verification (mirrors the if/else above)
+    // validating with a switch expression
     switch (true) {
-        case price >= 500: category = "Premium";  break;
-        case price >= 50:  category = "Standard"; break;
-        default:           category = "Budget";   break;
+        case price >= 500:
+            category = "Premium";
+            break;
+        case price >= 50:
+            category = "Standard";
+            break;
+        default:
+            category = "Budget";
+            break;
     }
 
     return category;
 }
 
-/** Returns the CSS badge class for a category (ternary chain). */
+// ternary operator to determine badge CSS class
 const getBadgeClass = (cat) =>
-    cat === "Premium"  ? "badge-premium"
-  : cat === "Standard" ? "badge-standard"
-  :                      "badge-budget";
+    cat === "Premium" ? "badge-premium" :
+    cat === "Standard" ? "badge-standard" :
+    "badge-budget";
 
-// ───────────────────────────────────────────────
-//  4 · LOOPS  (Assignment 4)
-// ───────────────────────────────────────────────
-
-/**
- * Seeds the inventory array using a for-loop with continue.
- * Demonstrates: for, continue, break.
- */
+// populate initial products using a for loop with continue guard
 function seedInventory() {
     for (let i = 0; i < seedProducts.length; i++) {
-        const p = seedProducts[i];
+        const item = seedProducts[i];
 
-        // continue: skip any product with qty of 0 (none here, but pattern shown)
-        if (p.qty <= 0) continue;
+        // skip invalid/zero quantity entries
+        if (item.qty <= 0) continue;
 
         inventory.push({
-            id: nextId++,       // post-increment operator
-            name: p.name,
-            price: p.price,
-            qty: p.qty,
-            category: classifyProduct(p.price)
+            id: nextId++,
+            name: item.name,
+            price: item.price,
+            qty: item.qty,
+            category: classifyProduct(item.price)
         });
     }
 
-    logToPage(`=== ${APP_NAME} Initialized ===`, "header");
-    logToPage(`Loaded ${inventory.length} seed products via for-loop with continue guard.`);
+    logToScreen(`=== ${APP_NAME} Initialized ===`, "header");
+    logToScreen(`Loaded ${inventory.length} initial items into inventory.`);
 }
 
-// ───────────────────────────────────────────────
-//  5 · FUNCTIONS  (Assignment 5)
-// ───────────────────────────────────────────────
-
-/** Standard function with default parameters */
+// adds a new product with default parameters and validation
 function addProduct(name = "Unnamed", price = 0, qty = 1) {
-    // Scope demonstration: these variables are block-scoped to this function
-    let trimmedName = name.trim();
+    const cleanName = name.trim();
+    const numPrice = parseFloat(price);
+    const numQty = parseInt(qty, 10);
 
-    if (trimmedName === "" || price <= 0 || qty <= 0) {
-        showMessage("Please fill in all fields with valid values.", "error");
-        logToPage(`[ERROR] Invalid input: name="${trimmedName}", price=${price}, qty=${qty}`, "error");
+    if (!cleanName || isNaN(numPrice) || isNaN(numQty) || numPrice <= 0 || numQty <= 0) {
+        showFeedback("Please enter a valid product name, price, and quantity.", "error");
+        logToScreen(`[ERROR] Invalid product input: "${cleanName}", $${price}, qty:${qty}`, "error");
         return false;
     }
 
-    // Check for duplicate names (case-insensitive)
+    // check for duplicate product name (case-insensitive)
     const duplicate = inventory.find(
-        item => item.name.toLowerCase() === trimmedName.toLowerCase()
+        p => p.name.toLowerCase() === cleanName.toLowerCase()
     );
     if (duplicate) {
-        showMessage(`"${trimmedName}" already exists. Use a different name.`, "error");
-        logToPage(`[WARN] Duplicate blocked: "${trimmedName}"`, "warn");
+        showFeedback(`"${cleanName}" is already in inventory.`, "error");
+        logToScreen(`[WARN] Duplicate prevented: "${cleanName}"`, "warn");
         return false;
     }
 
     const product = {
         id: nextId++,
-        name: trimmedName,
-        price: parseFloat(price),
-        qty: parseInt(qty, 10),
-        category: classifyProduct(price)
+        name: cleanName,
+        price: numPrice,
+        qty: numQty,
+        category: classifyProduct(numPrice)
     };
 
-    inventory.push(product);    // Array mutator: push
-
-    logToPage(`[ADD] "${product.name}" | $${product.price} × ${product.qty} → Category: ${product.category}`);
-    showMessage(`✅ "${product.name}" added successfully!`, "success");
+    inventory.push(product);
+    logToScreen(`[ADD] "${product.name}" | $${product.price} x ${product.qty} (${product.category})`);
+    showFeedback(`Added "${product.name}" successfully!`, "success");
     return true;
 }
 
-/** Arrow function — removes a product by ID */
+// arrow function to remove an item by id
 const removeProduct = (id) => {
-    const idx = inventory.findIndex(item => item.id === id);
-    if (idx === -1) return;
+    const index = inventory.findIndex(item => item.id === id);
+    if (index === -1) return;
 
-    const removed = inventory.splice(idx, 1)[0];
-    logToPage(`[DELETE] Removed "${removed.name}" (ID: ${removed.id})`);
+    const removed = inventory.splice(index, 1)[0];
+    logToScreen(`[DELETE] Removed "${removed.name}" (ID #${removed.id})`);
     renderInventory();
     updateAnalytics();
 };
 
-// ───────────────────────────────────────────────
-//  6 · ARRAY METHODS  (Assignment 6)
-// ───────────────────────────────────────────────
-
-/** Renders the inventory table — uses forEach */
+// renders table using array filter and forEach
 function renderInventory() {
-    const tbody = document.getElementById("inventory-body");
-    const emptyState = document.getElementById("empty-state");
-    const searchTerm = document.getElementById("search-input").value.toLowerCase();
-    const filterCat  = document.getElementById("filter-category").value;
+    const tableBody = document.getElementById("table-body");
+    const emptyMsg = document.getElementById("empty-msg");
+    const searchInput = document.getElementById("search-box");
+    const categoryFilter = document.getElementById("category-filter");
 
-    // filter: narrow by search term and category
+    const query = searchInput ? searchInput.value.toLowerCase().trim() : "";
+    const filterCat = categoryFilter ? categoryFilter.value : "all";
+
     const filtered = inventory.filter(item => {
-        const matchesSearch = item.name.toLowerCase().includes(searchTerm);
+        const matchesQuery = item.name.toLowerCase().includes(query);
         const matchesCategory = filterCat === "all" || item.category === filterCat;
-        return matchesSearch && matchesCategory;
+        return matchesQuery && matchesCategory;
     });
 
-    tbody.innerHTML = "";
+    tableBody.innerHTML = "";
 
     if (filtered.length === 0) {
-        emptyState.classList.remove("hidden");
-        emptyState.textContent = inventory.length === 0
-            ? "No products in inventory. Add one above! 🚀"
-            : "No products match your search/filter. 🔍";
+        emptyMsg.classList.remove("hidden");
+        emptyMsg.textContent = inventory.length === 0
+            ? "No products in inventory yet. Add one above!"
+            : "No products matched your search.";
         return;
     }
 
-    emptyState.classList.add("hidden");
+    emptyMsg.classList.add("hidden");
 
-    // forEach: iterate and build table rows
     filtered.forEach((item, index) => {
         const { lineTotal, discount } = calculateLineTotal(item.price, item.qty);
         const badgeClass = getBadgeClass(item.category);
@@ -221,167 +187,154 @@ function renderInventory() {
             <td><strong>${item.name}</strong></td>
             <td>$${item.price.toFixed(2)}</td>
             <td>${item.qty}</td>
-            <td>$${lineTotal.toFixed(2)}${discount > 0 ? ` <small style="color:var(--green)">(-10%)</small>` : ""}</td>
+            <td>$${lineTotal.toFixed(2)}${discount > 0 ? ' <small style="color:var(--green)">(-10%)</small>' : ""}</td>
             <td><span class="badge ${badgeClass}">${item.category}</span></td>
-            <td><button class="btn btn-delete" data-id="${item.id}">✕ Remove</button></td>
+            <td><button class="btn-del" data-id="${item.id}">Remove</button></td>
         `;
-        tbody.appendChild(tr);
+        tableBody.appendChild(tr);
     });
 
-    // Attach delete handlers
-    tbody.querySelectorAll(".btn-delete").forEach(btn => {
-        btn.addEventListener("click", () => removeProduct(Number(btn.dataset.id)));
+    // attach delete button events
+    tableBody.querySelectorAll(".btn-del").forEach(btn => {
+        btn.addEventListener("click", () => {
+            removeProduct(Number(btn.dataset.id));
+        });
     });
 }
 
-/** Updates analytics cards — uses map, filter, reduce */
+// recalculates statistics using loops and array methods
 function updateAnalytics() {
-    const totalItems = inventory.length;
+    const totalCount = inventory.length;
 
-    // map: extract line totals
-    const lineTotals = inventory.map(item => {
+    // extract line totals with map
+    const totals = inventory.map(item => {
         const { lineTotal } = calculateLineTotal(item.price, item.qty);
         return lineTotal;
     });
 
-    // reduce (via for-loop for clarity & Assignment 4 demonstration)
+    // sum totals using a standard loop
     let totalValue = 0;
-    for (let i = 0; i < lineTotals.length; i++) {
-        totalValue += lineTotals[i];
+    for (let i = 0; i < totals.length; i++) {
+        totalValue += totals[i];
     }
 
-    // while loop: find the most expensive product
-    let mostExpensive = "—";
+    // find most expensive item using a while loop
+    let topItemName = "-";
     if (inventory.length > 0) {
-        let maxPrice = 0;
-        let idx = 0;
-        while (idx < inventory.length) {
-            if (inventory[idx].price > maxPrice) {
-                maxPrice = inventory[idx].price;
-                mostExpensive = inventory[idx].name;
+        let highestPrice = 0;
+        let i = 0;
+        while (i < inventory.length) {
+            if (inventory[i].price > highestPrice) {
+                highestPrice = inventory[i].price;
+                topItemName = inventory[i].name;
             }
-            idx++;
+            i++;
         }
     }
 
-    // Average price (ternary)
-    const avgPrice = totalItems > 0 ? totalValue / totalItems : 0;
+    const averagePrice = totalCount > 0 ? totalValue / totalCount : 0;
 
-    // Update DOM
-    document.getElementById("val-total-items").textContent = totalItems;
-    document.getElementById("val-total-value").textContent = `$${totalValue.toFixed(2)}`;
-    document.getElementById("val-avg-price").textContent = `$${avgPrice.toFixed(2)}`;
-    document.getElementById("val-most-expensive").textContent = mostExpensive;
+    // update stats in UI
+    const statItems = document.getElementById("stat-items");
+    const statValue = document.getElementById("stat-value");
+    const statAvg = document.getElementById("stat-avg");
+    const statExpensive = document.getElementById("stat-expensive");
 
-    // Log analytics
-    logToPage("--- Financial Analytics ---", "header");
-    logToPage(`Total Items: ${totalItems} | Total Value: $${totalValue.toFixed(2)} | Avg: $${avgPrice.toFixed(2)} | Top: ${mostExpensive}`);
+    if (statItems) statItems.textContent = totalCount;
+    if (statValue) statValue.textContent = `$${totalValue.toFixed(2)}`;
+    if (statAvg) statAvg.textContent = `$${averagePrice.toFixed(2)}`;
+    if (statExpensive) statExpensive.textContent = topItemName;
 
-    // map: build formatted report
-    const report = inventory.map(item => `${item.name.toUpperCase()}: $${item.price}`);
-    logToPage(`Report: [${report.map(r => `"${r}"`).join(", ")}]`);
+    logToScreen(`[STATS] Total Items: ${totalCount} | Inventory Value: $${totalValue.toFixed(2)} | Avg: $${averagePrice.toFixed(2)}`);
 }
 
-// ───────────────────────────────────────────────
-//  UI HELPERS
-// ───────────────────────────────────────────────
+// temporary alert message helper
+function showFeedback(text, type) {
+    const msg = document.getElementById("form-msg");
+    if (!msg) return;
 
-/** Shows a temporary success/error message */
-function showMessage(text, type) {
-    const msgEl = document.getElementById("form-message");
-    msgEl.textContent = text;
-    msgEl.className = `message ${type}`;
-    msgEl.classList.remove("hidden");
+    msg.textContent = text;
+    msg.className = `msg ${type}`;
+    msg.classList.remove("hidden");
 
-    // Auto-hide after 3 seconds — demonstrates setTimeout (bonus)
     setTimeout(() => {
-        msgEl.classList.add("hidden");
+        msg.classList.add("hidden");
     }, 3000);
 }
 
-// ───────────────────────────────────────────────
-//  SCOPE DEMONSTRATION  (Assignment 5 bonus)
-// ───────────────────────────────────────────────
-
-function demonstrateScope() {
-    logToPage("--- Scope Demonstration ---", "header");
-
+// demonstrates variable scope (let vs var vs block scoping)
+function runScopeDemo() {
+    logToScreen("--- Scope Demonstration ---", "header");
     try {
         {
-            let blockScoped = "I am block-scoped (let)";
-            logToPage(`Inside block: ${blockScoped}`);
+            let localScope = "Block-scoped let variable";
+            logToScreen(`Inside block: ${localScope}`);
         }
-        // Accessing blockScoped outside its block throws ReferenceError
-        // noinspection JSUnresolvedVariable
-        logToPage(blockScoped);     // eslint-disable-line no-undef
-    } catch (error) {
-        logToPage(`Scope Test: ${error.name}: ${error.message}`, "warn");
+        // localScope is not accessible here
+        logToScreen(localScope);
+    } catch (err) {
+        logToScreen(`Expected error caught outside block: ${err.message}`, "warn");
     }
 
-    // var vs let
-    var funcScoped = "I am function-scoped (var)";
-    logToPage(`Function scope: ${funcScoped}`);
+    var functionScope = "Function-scoped var variable";
+    logToScreen(`Inside function: ${functionScope}`);
 }
 
-// ───────────────────────────────────────────────
-//  DO…WHILE DEMONSTRATION  (Assignment 4 bonus)
-// ───────────────────────────────────────────────
-
-function demonstrateDoWhile() {
-    logToPage("--- Do…While Loop ---", "header");
+// demonstrates do-while loop
+function runDoWhileDemo() {
+    logToScreen("--- Do-While Loop Demonstration ---", "header");
     let count = 0;
     do {
         count++;
         if (count % 2 === 0) {
-            logToPage(`  Count ${count}: even — skipping via continue logic`);
+            logToScreen(`Count ${count}: (even) skipped with continue`);
             continue;
         }
-        logToPage(`  Count ${count}: odd — processing`);
-    } while (count < 5);
+        logToScreen(`Count ${count}: (odd) processed`);
+    } while (count < 4);
 }
 
-// ───────────────────────────────────────────────
-//  EVENT LISTENERS & INITIALISATION
-// ───────────────────────────────────────────────
-
+// initialize everything once the DOM is ready
 document.addEventListener("DOMContentLoaded", () => {
-    // Seed inventory
     seedInventory();
-
-    // Run demonstrations
-    demonstrateScope();
-    demonstrateDoWhile();
-
-    // Initial render
+    runScopeDemo();
+    runDoWhileDemo();
     renderInventory();
     updateAnalytics();
 
-    // Form submit
-    document.getElementById("product-form").addEventListener("submit", (e) => {
-        e.preventDefault();
-        const nameInput  = document.getElementById("product-name");
-        const priceInput = document.getElementById("product-price");
-        const qtyInput   = document.getElementById("product-qty");
+    // form submission
+    const form = document.getElementById("product-form");
+    if (form) {
+        form.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const nameEl = document.getElementById("product-name");
+            const priceEl = document.getElementById("product-price");
+            const qtyEl = document.getElementById("product-qty");
 
-        const success = addProduct(nameInput.value, priceInput.value, qtyInput.value);
+            const wasAdded = addProduct(nameEl.value, priceEl.value, qtyEl.value);
 
-        if (success) {
-            // Reset form
-            nameInput.value  = "";
-            priceInput.value = "";
-            qtyInput.value   = "";
-            nameInput.focus();
+            if (wasAdded) {
+                nameEl.value = "";
+                priceEl.value = "";
+                qtyEl.value = "";
+                nameEl.focus();
 
-            renderInventory();
-            updateAnalytics();
-        }
-    });
+                renderInventory();
+                updateAnalytics();
+            }
+        });
+    }
 
-    // Live search
-    document.getElementById("search-input").addEventListener("input", renderInventory);
+    // search & filter listeners
+    const searchBox = document.getElementById("search-box");
+    if (searchBox) {
+        searchBox.addEventListener("input", renderInventory);
+    }
 
-    // Category filter
-    document.getElementById("filter-category").addEventListener("change", renderInventory);
+    const categoryFilter = document.getElementById("category-filter");
+    if (categoryFilter) {
+        categoryFilter.addEventListener("change", renderInventory);
+    }
 
-    logToPage(`\n✅ ${APP_NAME} is ready.`, "header");
+    logToScreen(`Ready! ${APP_NAME} is active.`);
 });

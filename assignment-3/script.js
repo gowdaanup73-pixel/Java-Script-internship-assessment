@@ -1,33 +1,38 @@
+// Assignment 3: Control Flow (Grade Classifier)
+
 let score = 85;
 let grade;
 
+// using if else to assign grade
 if (score >= 90) {
-    grade = 'A';
+    grade = "A";
 } else if (score >= 80) {
-    grade = 'B';
+    grade = "B";
 } else if (score >= 70) {
-    grade = 'C';
+    grade = "C";
 } else {
-    grade = 'F';
+    grade = "F";
 }
 
+// using switch to give feedback based on grade
 switch (grade) {
-    case 'A':
+    case "A":
         console.log("Excellent! Outstanding performance.");
         break;
-    case 'B':
-        console.log("Good job! Above average performance.");
+    case "B":
+        console.log("Good job! Above average.");
         break;
-    case 'C':
-        console.log("Satisfactory. Meets expectations.");
+    case "C":
+        console.log("Satisfactory. Keep improving.");
         break;
     default:
-        console.log("Needs improvement. Consider retaking the course.");
+        console.log("Needs improvement.");
         break;
 }
 
+// ternary operator for pass/fail
 let status = score >= 70 ? "Passed" : "Failed";
 
-console.log(`Score: ${score}`);
-console.log(`Grade: ${grade}`);
-console.log(`Status: ${status}`);
+console.log("Score: " + score);
+console.log("Grade: " + grade);
+console.log("Status: " + status);

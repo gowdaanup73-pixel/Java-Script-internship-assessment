@@ -1,17 +1,24 @@
-function standardArea(length = 5, width = 4) {
+// Assignment 5: Functions and Scope
+
+// standard function with default parameters
+function calculateArea(length = 5, width = 4) {
     return length * width;
 }
 
-const arrowArea = (length = 5, width = 4) => length * width;
+// arrow function doing the same thing
+const calcArea = (length = 5, width = 4) => length * width;
 
-console.log(`Standard Function Area (Default 5x4): ${standardArea()}`);
-console.log(`Arrow Function Area (Custom 10x3): ${arrowArea(10, 3)}`);
+console.log("Standard function (default 5x4): " + calculateArea());
+console.log("Arrow function (custom 10x3): " + calcArea(10, 3));
 
+// block scope demonstration using try-catch
 try {
     {
         let blockVar = "I am block scoped";
+        console.log("Inside block: " + blockVar);
     }
+    // this will throw an error because blockVar is not accessible here
     console.log(blockVar);
 } catch (error) {
-    console.log(`Scope Test Error: ${error.name}: ${error.message} (when accessed outside block)`);
+    console.log("Caught error: " + error.name + " - " + error.message);
 }

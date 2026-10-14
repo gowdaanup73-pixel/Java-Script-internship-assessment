@@ -1,18 +1,29 @@
+// Assignment 6: Array Methods
+
 const products = [
     { name: "Laptop", price: 800 },
     { name: "Mouse", price: 25 },
     { name: "Keyboard", price: 45 }
 ];
 
-console.log("-- All Products (forEach) --");
-products.forEach(p => {
-    console.log(`Item: ${p.name} - Price: $${p.price}`);
+// forEach - print each product
+console.log("All Products:");
+products.forEach(function (product) {
+    console.log("  " + product.name + " - $" + product.price);
 });
 
-console.log("\n-- Filtered Products (Price < $50) --");
-const filtered = products.filter(p => p.price < 50);
-filtered.forEach(p => console.log(`  ${p.name}: $${p.price}`));
+// filter - get products under $50
+console.log("\nProducts under $50:");
+let affordable = products.filter(function (product) {
+    return product.price < 50;
+});
+affordable.forEach(function (product) {
+    console.log("  " + product.name + " - $" + product.price);
+});
 
-console.log("\n-- Mapped Product Tags (map) --");
-const mapped = products.map(p => `${p.name.toUpperCase()} costs $${p.price}`);
-console.log(`[ ${mapped.map(m => `"${m}"`).join(", ")} ]`);
+// map - create an array of formatted strings
+console.log("\nProduct Tags:");
+let tags = products.map(function (product) {
+    return product.name.toUpperCase() + " costs $" + product.price;
+});
+console.log(tags);
